@@ -19,6 +19,9 @@ module PS_wrapper
   ! coupling with IE
   public:: PS_put_from_ie
 
+  ! coupling with GM
+  public:: PS_get_for_gm
+  
 contains
 
   !===========================================================================
@@ -166,6 +169,9 @@ contains
          case("#TESTS")
             call read_var('TestFill', TestFill)
 
+         case("#GMCOUPLING")
+            
+            
          case default
             if(iProc==0) then
                write(*,'(a,i4,a)')NameSub//' IE_ERROR at line ',i_line_read(),&
@@ -190,6 +196,7 @@ contains
     ! Since PS has a static grid the descriptor has to be set once.
     ! There can be many couplers that attempt to set the descriptor,
     ! so we must check IsInitialized.
+
     use ModProcPS
     use ModSizeDGCPM
     use ModMainDGCPM
@@ -210,19 +217,31 @@ contains
 
     if (debug > 0) write(*,*) "begin PS_set_grid"
 
+    ! DGCPM is a cylindrical model that operates in the equatorial plane.
+    ! vrcells is the radial coordinate, vphicells the phi coordinate.
     call set_grid_descriptor(                &
          PS_,                                &! component index
          nDim=2,                             &! dimensionality
          nRootBlock_D=(/1,1/),               &! radius and MLT
          nCell_D =(/nthetacells,nphicells/), &! size of node based grid
-         XyzMin_D=(/cHalf, cHalf/),          &! min colat and longitude indexes
-         XyzMax_D=(/nthetacells+cHalf,       &
-         nphicells+cHalf/),                  &! max colat and longitude indexes
+         XyzMin_D=(/vrcells(1), 0.0/),       &! min radius and longitude indexes
+         XyzMax_D=(/vrcells(nthetacells),    &
+                   ctwopi/),                 &! max radius and longitude indexes
          TypeCoord='SMG',                    &! solar magnetic coord.
-         Coord1_I=90.0-vthetacells,          &! radius
-         Coord2_I=vphicells,                 &! longitudes/MLTs
+         Coord1_I=vrcells,                   &! radius
+         Coord2_I=vphicells*ctwopi/360.,     &! longitudes in rads
          Coord3_I=zTmp)
 
+    if(DoTestMe)then
+       write(*,*) 'PS: DGCPM Grid info:'
+       write(*,*) 'nTheta, nPhi cells = ', nthetacells,nphicells
+       write(*,*) 'Radial grid range (RE) = ', vrcells(1), vrcells(nthetacells)
+       write(*,*) 'Azimuthal grid range (deg) = ', &
+            vphicells(1), vphicells(nphicells)
+       write(*,*) 'Azimuthal grid range (rad) = ', &
+            vphicells(1)*ctwopi/360., vphicells(nphicells)*ctwopi/360.
+    end if
+    
     if (debug > 0) write(*,*) "end PS_set_grid"
 
   end subroutine PS_set_grid
@@ -396,7 +415,7 @@ contains
 
   !============================================================================
   subroutine PS_put_from_ie_complete
-
+    
     !--------------------------------------------------------------------------
 
     ! Currently Empty.
@@ -404,6 +423,108 @@ contains
 
   end subroutine PS_put_from_ie_complete
 
+  !============================================================================
+  subroutine PS_get_for_gm(Buffer_IIV,iSizeIn,jSizeIn,nVar,NameVarIn)
+
+    ! Obtain total number density as a function of lat/lon.
+    ! Rather than put density/pressure into a "hard coded" slot,
+    ! allow user to select iGmCoupleFluid using #GMCOUPLING in #PS portion.
+    ! NameVarIn is parsed, fluid corresponding to iGmCoupleFluid is used.
+    ! Default action: assume single fluid and place information there.
+    ! Pressure is set by assuming constant temperature selected by user.
+
+    use ModConst,       ONLY: cBoltzmann, cEVToK, cProtonMass
+    use ModMainDGCPM,   ONLY: mgridden
+    use ModCoupleDGCPM, ONLY: iGmFluidCouple, tempPlas
+    
+    integer, intent(in)                               :: iSizeIn,jSizeIn,nVar
+    real, dimension(iSizeIn,jSizeIn,nVar), intent(out):: Buffer_IIV
+    character (len=*),intent(in)                      :: NameVarIn
+
+    ! Local variables:
+    integer :: i, iEnd, nGmFluids, iPress=1, iRho=2
+
+    character(len=20)  :: NameVar_I(nVar)
+    character(len=100) :: NameVarRemain, NameVarNow
+    
+    ! Testing variables:
+    character (len=*),parameter :: NameSub='PS_get_for_gm'
+    logical                     :: DoTest, DoTestMe
+    
+    !--------------------------------------------------------------------------
+    call CON_set_do_test(NameSub,DoTest,DoTestMe)
+
+    if (DoTestMe) &
+         write(*,*)NameSub,' starting with iSizeIn,jSizeIn,nVar,NameVar=',&
+         iSizeIn,jSizeIn,nVar,NameVarIn
+    
+    ! Initialize all density and pressures to -1 (i.e., no coupling)
+    Buffer_IIV=-1.0
+
+    ! Rather than assume that a set variable list is sent to PS corresponding
+    ! to either single or two-fluid MHD, parse the variable list appropriately.
+    ! Parse the names of the variables requested by GM:
+    NameVarRemain = NameVarIn
+    if(DoTestMe)write(*,*)' PS: Initially, NameVarRemain = ', NameVarRemain
+    do i=1,nVar
+       ! Find length of current variable name.
+       ! Go to end of string if delimiter not found.
+       iEnd = index(NameVarRemain,':')
+       if(iEnd==0) iEnd=len_trim(NameVarRemain)+1
+
+       ! Extract the current variable name:
+       NameVar_I(i) = NameVarRemain(:iEnd-1)
+
+       ! Save only remaining variables, blank out old names:
+       NameVarRemain = NameVarRemain(iEnd+1:)//'                         '
+       if(DoTestMe) then
+          write(*,*)NameSub//': Found variable = ', NameVar_I(i)
+          write(*,*)NameSub//': NameVarRemain = ', NameVarRemain
+       end if
+       
+       ! Ensure that all variables are "rho" or "p" variables.
+       ! If not, then there's something wrong with the coupling.
+       NameVarNow = NameVar_I(i)
+       iEnd = len_trim(NameVarNow)
+
+       if( ( index(NameVarNow(iEnd:iEnd),'p')<1 ) .and. &
+           ( index(NameVarNow,'rho')<1) ) &
+            call CON_stop(NameSub// &
+            ': NameVar includes variables outside of p and rho')
+    end do
+
+    ! Calculate number of fluids:
+    nGmFluids = nVar/2 - 1
+
+    ! Set indexes for fluid to which we couple:
+    if(iGmFluidCouple>0)then
+       iPress = 2+iGmFluidCouple
+       iRho   = 2+nGmFluids+iGmFluidCouple
+    end if
+    
+    if(DoTestMe)then
+       write(*,*)NameSub//' fluid coupling info:'
+       write(*,*)'   PS found ', nGmFluids, ' fluids in NameVar.'
+       write(*,*)'   Coupling to fluid #', iGmFluidCouple
+       write(*,*)'   NameVar = ', NameVarIn
+       write(*,*)'   Writing density  to iVar, Var = ',iRho, NameVar_I(iRho)
+       write(*,*)'   Writing pressure to iVar, Var = ',iPress, NameVar_I(iPress)
+    end if
+
+    ! Now, set values in SI units to pass back to GM.
+    Buffer_IIV(:,:,iRho)   = mgridden * cProtonMass! kg/m^3
+    Buffer_IIV(:,:,iPress) = tempPlas*cEVToK*cBoltzmann*mgridden ! P=nkT in Pa
+
+    if(DoTestMe)then
+       write(*,*)NameSub//': Max/Min values sent from PS to GM:'
+       write(*,'(a,2e12.3)')'   Density [cm-3] = ', &
+            maxval(mgridden/1E6), minval(mgridden/1E6)
+       write(*,'(a,2e12.3)')'   Pressure [Pa]  = ', &
+            maxval(Buffer_IIV(:,:,iPress)), minval(Buffer_IIV(:,:,iPress))
+    end if
+    
+  end subroutine PS_get_for_gm
+  
   !============================================================================
 
   subroutine PS_init_session(iSession, tSimulation)

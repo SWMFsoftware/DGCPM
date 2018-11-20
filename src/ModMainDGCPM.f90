@@ -22,7 +22,6 @@ Module ModMainDGCPM
   integer :: debug = -1
 
   ! Define Output Variable structure
-  ! Formerly ModHeidiDGCPM
   real :: vthetacells(nthetacells),vphicells(nphicells)
   real :: vlzcells(nthetacells),vmltcells(nphicells)    ! __ and MLT.
   real :: vrcells(nthetacells)                          ! L-Shell
