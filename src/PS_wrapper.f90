@@ -80,7 +80,8 @@ contains
     subroutine read_param
 
       use ModReadParam
-      use ModUtilities, Only: fix_dir_name, check_dir, lower_case
+      use ModUtilities,   ONLY: fix_dir_name, check_dir, lower_case
+      use ModCoupleDGCPM, ONLY: iGmFluidCouple, TempPlas
       ! The name of the command
       character (len=100) :: NameCommand
 
@@ -170,11 +171,12 @@ contains
             call read_var('TestFill', TestFill)
 
          case("#GMCOUPLING")
-            
+            call read_var('iGmFluidCouple', iGmFluidCouple)
+            call read_var('TempPlasma',     TempPlas)
             
          case default
             if(iProc==0) then
-               write(*,'(a,i4,a)')NameSub//' IE_ERROR at line ',i_line_read(),&
+               write(*,'(a,i4,a)')NameSub//' PS_ERROR at line ',i_line_read(),&
                     ' invalid command '//trim(NameCommand)
                if(UseStrict)call CON_stop('Correct PARAM.in!')
             end if
@@ -435,7 +437,7 @@ contains
 
     use ModConst,       ONLY: cBoltzmann, cEVToK, cProtonMass
     use ModMainDGCPM,   ONLY: mgridden
-    use ModCoupleDGCPM, ONLY: iGmFluidCouple, tempPlas
+    use ModCoupleDGCPM, ONLY: iGmFluidCouple, TempPlas
     
     integer, intent(in)                               :: iSizeIn,jSizeIn,nVar
     real, dimension(iSizeIn,jSizeIn,nVar), intent(out):: Buffer_IIV
@@ -512,8 +514,16 @@ contains
     end if
 
     ! Now, set values in SI units to pass back to GM.
-    Buffer_IIV(:,:,iRho)   = mgridden * cProtonMass! kg/m^3
-    Buffer_IIV(:,:,iPress) = tempPlas*cEVToK*cBoltzmann*mgridden ! P=nkT in Pa
+    ! GM will only couple if TOTAL fluid values are >0.
+    ! Even in MF coupling, set both total AND individual fluid values.
+    ! Total fluid coupling:
+    Buffer_IIV(:,:,2) = mgridden * cProtonMass! kg/m^3
+    Buffer_IIV(:,:,1) = tempPlas*cEVToK*cBoltzmann*mgridden ! P=nkT in Pa
+    ! Multi fluid coupling:
+    if(nGmFluids>0)then
+       Buffer_IIV(:,:,iRho)   = mgridden * cProtonMass
+       Buffer_IIV(:,:,iPress) = tempPlas*cEVToK*cBoltzmann*mgridden
+    end if
 
     if(DoTestMe)then
        write(*,*)NameSub//': Max/Min values sent from PS to GM:'

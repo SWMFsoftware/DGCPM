@@ -85,6 +85,33 @@ Set parameters that control flux tube refilling rate.
 
 </commandgroup>
 
+<commandgroup name="COUPLING PARAMETERS">
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!Coupling  group!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+<command name="GMCOUPLING">
+  <parameter name="iGmFluidCouple"  type="integer" min="1"   default="1"/>
+  <parameter name="TempPlasma" type="float"   min="0.01" default="2.0"/>
+
+#GMCOUPLING
+1			iGmFluidCouple
+2.0			TempPlasma (eV)
+
+This command controls the coupling of DGCPM's plasmasphere density and
+temperature to a GM component in the SWMF.  DGCPM will pass its density
+across its grid to GM.  Temperature is converted to thermal pressure
+based on the density of the plasma.  iGmFluidCouple sets the fluid to which
+density and pressure values are coupled if GM is using a multi-fluid approach.
+The default behavior is to couple to the first fluid.  If GM is in single
+fluid mode, this parameter has no impact.  TempPlasma sets the temperature of
+the plasmasphere in electron volts.
+
+Default values are shown.
+</command>
+
+</commandgroup>
+
 <commandgroup name="OUTPUT PARAMETERS">
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!Output  group!!!!!!!!!!!!
