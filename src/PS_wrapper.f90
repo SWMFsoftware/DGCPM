@@ -436,7 +436,7 @@ contains
     ! Pressure is set by assuming constant temperature selected by user.
 
     use ModConst,       ONLY: cBoltzmann, cEVToK, cProtonMass
-    use ModMainDGCPM,   ONLY: mgridden
+    use ModMainDGCPM,   ONLY: mgridden, nphicells, vphicells
     use ModCoupleDGCPM, ONLY: iGmFluidCouple, TempPlas
     
     integer, intent(in)                               :: iSizeIn,jSizeIn,nVar
@@ -444,7 +444,7 @@ contains
     character (len=*),intent(in)                      :: NameVarIn
 
     ! Local variables:
-    integer :: i, iEnd, nGmFluids, iPress=1, iRho=2
+    integer :: i, iEnd, j, jShift, nPhi, nGmFluids, iPress=1, iRho=2
 
     character(len=20)  :: NameVar_I(nVar)
     character(len=100) :: NameVarRemain, NameVarNow
@@ -513,16 +513,38 @@ contains
        write(*,*)'   Writing pressure to iVar, Var = ',iPress, NameVar_I(iPress)
     end if
 
+    ! DGCPM is not true SM coordinates: 0 degrees is on night side.
+    ! Must rotate 180.  Start by finding index corresponding to 180.
+    nPhi = nphicells
+    do j=1, nphicells-1
+       if(vphicells(j+1)>=180.)exit
+    end do
+    jShift = j
+
+    if(DoTestMe)then
+       write(*,*)NameSub//': jShift, phi = ', jshift, vphicells(j)
+       write(*,*)'Correct rotation will shift cells by 180 degrees.'
+       write(*,*) 'Unrotated, vphicells= '
+       write(*,*) vphicells
+       write(*,*) '-----------------------------'
+       write(*,*) 'Rotated, vphicells= '
+       write(*,*) vphicells(jShift+1:)
+       write(*,*) vphicells(:jShift)
+    end if
+    
     ! Now, set values in SI units to pass back to GM.
     ! GM will only couple if TOTAL fluid values are >0.
     ! Even in MF coupling, set both total AND individual fluid values.
-    ! Total fluid coupling:
-    Buffer_IIV(:,:,2) = mgridden * cProtonMass! kg/m^3
-    Buffer_IIV(:,:,1) = tempPlas*cEVToK*cBoltzmann*mgridden ! P=nkT in Pa
+    ! Rotate 180 degrees to convert to true SM coordinates.
+    ! Total fluid coupling (convert to #/m^3 to kg/m^3, T to Pa)
+    Buffer_IIV(:,:nPhi-jshift,  2) = mgridden(:,jShift+1: ) * cProtonMass
+    Buffer_IIV(:,nPhi-jShift+1:,2) = mgridden(:,:jShift   ) * cProtonMass
+    Buffer_IIV(:,:,1) = tempPlas*cEVToK*cBoltzmann*Buffer_IIV(:,:,2)/cProtonMass
+
     ! Multi fluid coupling:
     if(nGmFluids>0)then
-       Buffer_IIV(:,:,iRho)   = mgridden * cProtonMass
-       Buffer_IIV(:,:,iPress) = tempPlas*cEVToK*cBoltzmann*mgridden
+       Buffer_IIV(:,:,iRho)   = Buffer_IIV(:,:,2)
+       Buffer_IIV(:,:,iPress) = Buffer_IIV(:,:,1)
     end if
 
     if(DoTestMe)then
