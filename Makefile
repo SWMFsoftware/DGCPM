@@ -12,14 +12,12 @@ rundir:
 	ln -s ${PSDIR}/Input/restart_cold ${RUNDIR}/PS/restartIN
 
 clean:
-	@touch src/Makefile.DEPEND src/Makefile.RULES
 	cd src; make clean
 
 distclean: 
 	./Config.pl -uninstall
 
 allclean:
-	@touch src/Makefile.DEPEND src/Makefile.RULES
 	cd src; make distclean
 	rm -f *~
 
