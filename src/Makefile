@@ -18,7 +18,7 @@ help:
 	@echo ' '
 	@echo '    help         (Makefile option list)'
 	@echo '    clean        (rm -f *~ *.o *.kmo *.mod *.T *.lst core)'
-	@echo '    distclean    (make clean; rm -f Makefile.DEPEND)'
+	@echo '    distclean    (make clean)'
 	@echo ' '
 
 
@@ -75,4 +75,3 @@ dgcpm.exe: ${OBJECTS} dgcpm_main.o
 clean: cleanfiles
 
 distclean: clean
-	rm -f Makefile.RULES Makefile.DEPEND
