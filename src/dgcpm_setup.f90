@@ -157,7 +157,7 @@ SUBROUTINE THERMAL
   use ModSizeDGCPM
   use ModMainDGCPM
   use ModIoDGCPM
-  use ModConstants
+  use ModConstDGCPM
   use ModCoupleDGCPM
   use ModTimeDGCPM
 

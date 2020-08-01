@@ -18,7 +18,7 @@ SUBROUTINE VOLLAND_STERN
   use ModSizeDGCPM
   use ModMainDGCPM
   use ModIoDGCPM
-  use ModConstants
+  use ModConstDGCPM
 
   implicit none
 

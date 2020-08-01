@@ -1,7 +1,7 @@
 !  Copyright (C) 2002 Regents of the University of Michigan, portions used with permission 
 !  For more information, see http://csem.engin.umich.edu/tools/swmf
 
-module ModConstants
+module ModConstDGCPM
 
   real, parameter :: pi = 3.141592654
   real, parameter :: dtor = pi/180.0        ! Degress to Radians
@@ -11,4 +11,4 @@ module ModConstants
   real, parameter :: Q = 1.6E-19            ! Electron Charge (ev->J)
   
 
-end module ModConstants
+end module ModConstDGCPM
