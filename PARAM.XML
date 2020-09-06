@@ -26,7 +26,8 @@ otherwise.
 Options for configuring the schemes and solvers, boundary conditions, 
 and other numerical options.
 
-<command name="TIMESTEP"><parameter name="DtStep" type="float" default="10.0"/>
+<command name="TIMESTEP"><parameter name="DtStep" type="real"
+         default="10.0" min="0.0"/>
 #TIMESTEP
 10.0	DtStep
 
@@ -42,17 +43,17 @@ Set the timestep for the simulation.  Default values are shown.
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 <command name="KP">
   <parameter name="NameSourceKp" type="string" default="const"/>
-  <parameter name="ConstKp"      type="int" min="0" max="9" default="0"
+  <parameter name="ConstKp"      type="real" min="0" max="9" default="0"
 	     if="$NameSourceKp eq 'const'"/>
   <parameter name="NameKpFile" type="string" if="$NameSourceKp eq 'file'"/>
 
-  #KP
-  const         NameSourceKp
-  3             ConstKp
+#KP
+const         NameSourceKp
+3.0           ConstKp
 
-  #KP
-  file          NameSourceKp
-  kp_data.dat   NameKpFile
+#KP
+file          NameSourceKp
+kp_data.dat   NameKpFile
   
 This command controls the behavior of the built-in Volland-Stern electric
 field model by setting the value of the Kp index -- the only input to VS.
@@ -68,10 +69,10 @@ For an example input file, see DGCPM/Input/kp_test.dat.
 
 
 <command name="FILLING">
-  <parameter name="EmptyPeriodClosed" type="float" min="0" default="3.0"/>
-  <parameter name="EmptyPeriodOpen"   type="float" min="0" default="1.0"/>
-  <parameter name="FillDays"          type="float" min="0" default="1.5"/>
-  <parameter name="FluxMax"           type="float" min="0" default="2.0E12"/>
+  <parameter name="EmptyPeriodClosed" type="real" min="0" default="3.0"/>
+  <parameter name="EmptyPeriodOpen"   type="real" min="0" default="1.0"/>
+  <parameter name="FillDays"          type="real" min="0" default="1.5"/>
+  <parameter name="FluxMax"           type="real" min="0" default="2.0E12"/>
 
 #FILLING
 3.0     EmptyPeriodClosed
@@ -92,7 +93,7 @@ Set parameters that control flux tube refilling rate.
 
 <command name="GMCOUPLING">
   <parameter name="iGmFluidCouple"  type="integer" min="1"   default="1"/>
-  <parameter name="TempPlasma" type="float"   min="0.01" default="2.0"/>
+  <parameter name="TempPlasma" type="real"   min="0.01" default="2.0"/>
 
 #GMCOUPLING
 1			iGmFluidCouple
@@ -119,7 +120,7 @@ Default values are shown.
 
 <command name="MLTSLICE">
   <parameter name="nMltSlice"  type="integer" min="0"   default="4"/>
-  <parameter name="DtMltSlice" type="float"   min="1.0" default="300.0"/>
+  <parameter name="DtMltSlice" type="real"   min="1.0" default="300.0"/>
 
 #MLTSLICE
 4	nMltSlice
@@ -133,6 +134,31 @@ file.  For example, if \textit{nMltSlice} is set to 4, output will extracted at
 therefore the total number of azimuthal cells (default is 120) must be evenly
 divisible by \textit{nMltSlice}.  Default values are shown.
 
+</command>
+
+<command name="OUTPUT">
+  <parameter name="WriteStatic" type="logical"/>
+  <parameter name="WriteDynamic" type="logical"/>
+  <parameter name="OutputInterval" type="real"/>
+  <parameter name="OutputType" type="string"/>
+  <parameter name="MagneticType" type="string"/>
+
+#OUTPUT
+T                       WriteStatic
+T                       WriteDynamic
+600.                    OutputInterval
+SHORT                   OutputType
+DIPOLE                  MagneticType
+
+Description to be improved and written by Daniel Welling
+</command>
+
+<command name="LOG">
+  <parameter name="WriteLogFile" type="logical"/>
+#LOG
+T                       WriteLogFile
+
+Description to be improved and written by Daniel Welling
 </command>
 
 </commandgroup>
