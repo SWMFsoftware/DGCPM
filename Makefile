@@ -22,4 +22,4 @@ allclean:
 	rm -f *~
 
 test:
-	echo "PS/DGCPM test is incomplete" > notest.diff
+	@echo "PS/DGCPM has no tests"
