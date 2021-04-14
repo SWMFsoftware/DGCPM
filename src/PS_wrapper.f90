@@ -198,7 +198,7 @@ contains
     ! Since PS has a static grid the descriptor has to be set once.
     ! There can be many couplers that attempt to set the descriptor,
     ! so we must check IsInitialized.
-
+    use ModNumConst
     use ModProcPS
     use ModSizeDGCPM
     use ModMainDGCPM
