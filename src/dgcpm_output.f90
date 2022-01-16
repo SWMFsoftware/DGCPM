@@ -19,7 +19,8 @@ SUBROUTINE WRESULT()
   use ModMainDGCPM
   use ModIoUnit, ONLY: UNITTMP_
   use ModTimeConvert, ONLY: TimeType, time_real_to_int
-  
+  use ModUtilities, ONLY: CON_set_do_test 
+ 
   implicit none
   
   integer ::  i,j
@@ -139,6 +140,7 @@ subroutine write_lslice
   use ModTimeDGCPM,   ONLY: CurrentTime
   use ModIoUnit,      ONLY: io_unit_new
   use ModTimeConvert, ONLY: TimeType, time_real_to_int
+  use ModUtilities,   ONLY: CON_set_do_test, CON_stop
 
   implicit none
 
@@ -224,6 +226,7 @@ subroutine write_mltslice
   use ModTimeDGCPM,   ONLY: CurrentTime, StartTime
   use ModIoUnit,      ONLY: io_unit_new
   use ModTimeConvert, ONLY: TimeType, time_real_to_int
+  use ModUtilities, ONLY: CON_set_do_test, CON_stop
 
   implicit none
 

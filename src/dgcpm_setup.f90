@@ -41,6 +41,7 @@ SUBROUTINE GETKPA
   use ModMainDGCPM, ONLY: A
   use ModTimeDGCPM, ONLY: CurrentTime
   use ModIndicesInterfaces
+  use ModUtilities, ONLY: CON_set_do_test, CON_stop
 
   implicit none
 

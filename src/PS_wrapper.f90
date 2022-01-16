@@ -6,6 +6,8 @@ module PS_wrapper
 
   ! Wrapper for DGCPM Plasmasphere Model
 
+  use ModUtilities, ONLY: CON_set_do_test, CON_stop
+
   implicit none
 
   private ! except

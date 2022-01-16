@@ -1,13 +1,14 @@
-!  Copyright (C) 2002 Regents of the University of Michigan, portions used with permission 
+!  Copyright (C) 2002 Regents of the University of Michigan,
+! portions used with permission 
 !  For more information, see http://csem.engin.umich.edu/tools/swmf
-Module ModIoDGCPM
-  !\
+module ModIoDGCPM
+
   ! Input/output variable definition module for the DGCPM program.
   ! Updated: Aron Dodger, January 2012 
-  !/
 
   use ModSizeDGCPM
-  use ModIoUnit, Only: iUnit => UNITTMP_, STDOUT_
+  use ModIoUnit, ONLY: iUnit => UNITTMP_, STDOUT_
+  use ModUtilities, ONLY: CON_set_do_test
 
   logical :: IsFramework
 
@@ -158,5 +159,6 @@ contains
     if(iUnitOut==STDOUT_)write(*,'(a)',ADVANCE='NO')trim(StringPrefix)
 
   end subroutine write_prefix
-
-end Module ModIoDGCPM
+  !===========================================================================
+end module ModIoDGCPM
+!=============================================================================

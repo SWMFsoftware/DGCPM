@@ -15,6 +15,7 @@ ccccccccccccccccccccccccccccccccccccccccc
      *    mgrider, mgridep, mgridvr, mgridvp, mgridn, mgridden,
      *    mgridhalf, mgridvol, mgridx, mgridy, mgridoc,
      *    mgridsource, mgridfluxa, mgridfluxr
+      use ModUtilities, ONLY: CON_stop
 
 c Input for entry getgrid
 c Input: nt, np size of thetagrid, phigrid arrays
