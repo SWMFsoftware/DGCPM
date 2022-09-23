@@ -158,7 +158,7 @@ MagneticType sets the field information to be included in the static output file
 DoWriteDynamic turns on dynamic file writing. These are snapshots of density, velocity, and other variables written at a set interval. OutputInterval sets the frequency of dynamic file writing. 
 
 OutputType sets the values to be written to file.
-All files begin by outputing the grid as theta and phi of the ionospheric footpoints of the field lines (in degrees) and the X, Y coordinates of the field line equitorial crossings (in RE in SM coordinates).
+All files begin by outputing the grid as theta and phi of the ionospheric footpoints of the field lines (in degrees) and the X, Y coordinates of the field line equatorial crossings (in RE in SM coordinates).
 Not all units for output values are known.
 Options include:
 \begin{itemize}
