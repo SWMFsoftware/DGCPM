@@ -23,8 +23,8 @@ Module ModMainDGCPM
 
   ! Define Output Variable structure
   real :: vthetacells(nthetacells),vphicells(nphicells)
-  real :: vlzcells(nthetacells),vmltcells(nphicells)    ! __ and MLT.
-  real :: vrcells(nthetacells)                          ! L-Shell
+  real :: vlzcells(nthetacells),vmltcells(nphicells)   ! __ and MLT.
+  real :: vrcells(nthetacells)                         ! L-Shell
   real :: potdgcpm(nthetacells,nphicells)
   real :: dendgcpm(nthetacells,nphicells)
   real :: mgridx(nthetacells,nphicells)
@@ -38,8 +38,8 @@ Module ModMainDGCPM
   real :: mgridfluxr(nthetacells,nphicells)
   real :: mgridn(nthetacells,nphicells)
   real :: mgridvol(nthetacells,nphicells)
-  real :: mgridden(nthetacells,nphicells)               ! Number density
-  real :: mgridpot(nthetacells,nphicells)
+  real :: mgridden(nthetacells,nphicells)              ! Number density (1/cc)
+  real :: mgridpot(nthetacells,nphicells)              ! Electric potential(kV)
   real :: mgridb(nthetacells,nphicells)
   real :: mgridbi(nthetacells,nphicells)
   real :: mgrider(nthetacells,nphicells)
@@ -53,7 +53,6 @@ Module ModMainDGCPM
   real test1_fluxp, test1_fluxr, test1_sourcep, test1_sourcer
   real test2_den, test2_pot, test2_er, test2_ep, test2_vr, test2_vp
   real test2_fluxp, test2_fluxr, test2_sourcep, test2_sourcer
-
 
   ! Define electric field related variables
   character (len=100) :: EFieldModel ='VS'

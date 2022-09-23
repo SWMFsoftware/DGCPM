@@ -144,13 +144,33 @@ divisible by \textit{nMltSlice}.  Default values are shown.
   <parameter name="MagneticType" type="string"/>
 
 #OUTPUT
-T                       WriteStatic
-T                       WriteDynamic
+T                       DoWriteStatic
+T                       DoWriteDynamic
 600.                    OutputInterval
 SHORT                   OutputType
 DIPOLE                  MagneticType
 
-Description to be improved and written by Daniel Welling
+Configure full-domain output files ({\tt dgcpm*.dat} files).
+
+DoWriteStatic turns on static file writing. This is a one-time output file that contains information about the magnetic field configuration, flux tube volume, and grid. It is only relevant for dipole magnetic field configurations.
+MagneticType sets the field information to be included in the static output file; however, only DIPOLE is implemented at present.
+
+DoWriteDynamic turns on dynamic file writing. These are snapshots of density, velocity, and other variables written at a set interval. OutputInterval sets the frequency of dynamic file writing. 
+
+OutputType sets the values to be written to file.
+All files begin by outputing the grid as theta and phi of the ionospheric footpoints of the field lines (in degrees) and the X, Y coordinates of the field line equitorial crossings (in RE in SM coordinates).
+Not all units for output values are known.
+Options include:
+\begin{itemize}
+\item {\tt SHORT} - Density and electric potential ($cm^{-3}$, $V$)
+\item {\tt VELOCITY} - Density, potential, radial velocity, azimuthal velocity ($cm^{-3}$, $V$, $m/s$, ?)
+\item {\tt POTENTIAL} - Density, electric potential ($cm^{-3}$, $V$)
+\item {\tt FLOWS} - Density, radial and azimuthal fluxes ($cm^{-3}$, ?, ?)
+\item {\tt OLD } - All variables in an obsolete/basic file format. Not recommended.
+\end{itemize}
+
+Default is to not write {\tt dgcpm*.dat}-type files.
+
 </command>
 
 <command name="LOG">
@@ -158,7 +178,10 @@ Description to be improved and written by Daniel Welling
 #LOG
 T                       WriteLogFile
 
-Description to be improved and written by Daniel Welling
+This command toggles the writing of the DGCPM log file output.
+This file writes the cross plasmasphere potential ($kV$) and Kp index to file every five mintues of simulation time.
+Default action is to not write the log file.
+
 </command>
 
 </commandgroup>

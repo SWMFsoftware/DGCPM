@@ -15,7 +15,7 @@ module ModIoDGCPM
   ! Define a few time and geophysical index input variables
   ! Formerly: Common block PARAM2
   integer :: nstep,iwpi
-  real    :: ut,r,time,tWriteOutput
+  real    :: ut,r,time,tWriteOutput=-1.0
 
   integer :: nst, nkp, nibc
   

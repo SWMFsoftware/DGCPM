@@ -86,28 +86,32 @@ SUBROUTINE WRESULT()
      end do; end do
      
   CASE ('VELOCITY')
-     write(UNITTMP_,*) 'I J X Y DEN POT VR VP'
-     write(UNITTMP_,*) mgridx
-     write(UNITTMP_,*) mgridy
-     write(UNITTMP_,*) mgridden
-     write(UNITTMP_,*) mgridpot
-     write(UNITTMP_,*) mgridvr
-     write(UNITTMP_,*) mgridvp
+     write(UNITTMP_,*) 'I J THETA PHI X Y N POT VR VP'
+     do j=1, nPhiCells; do i=1, nThetaCells
+        write(UnitTMP_, '( 2(1x,i4), 8(1x, E14.7))') &
+             i, j, 90.0-vthetacells(i), vphicells(j), &
+             mgridx(i,j), mgridy(i,j), mgridden(i,j), mgridpot(i,j), &
+             mgridvr(i,j), mgridvp(i,j)
+     end do; end do
+     
   CASE ('POTENTIAL')
-     write(UNITTMP_,*) 90.0 - vthetacells
-     write(UNITTMP_,*) vphicells
-     write(UNITTMP_,*) mgridx
-     write(UNITTMP_,*) mgridy
-     write(UNITTMP_,*) mgridpot
-     write(UNITTMP_,*) mgridcoro
+     write(UNITTMP_,*) 'I J THETA PHI X Y N POT CORO'
+     do j=1, nPhiCells; do i=1, nThetaCells
+        write(UnitTMP_, '( 2(1x,i4), 7(1x, E14.7))') &
+             i, j, 90.0-vthetacells(i), vphicells(j), &
+             mgridx(i,j), mgridy(i,j), mgridden(i,j), &
+             mgridpot(i,j), mgridcoro(i,j)
+     end do; end do
+ 
   CASE ('FLOWS')
-     write(UNITTMP_,*) 'I J THETA PHI X Y OC VOL'
-     write(UNITTMP_,*) 90.0 - vthetacells
-     write(UNITTMP_,*) vphicells
-     write(UNITTMP_,*) mgridx
-     write(UNITTMP_,*) mgridy
-     write(UNITTMP_,*) mgridfluxr
-     write(UNITTMP_,*) mgridfluxa
+     write(UNITTMP_,*) 'I J THETA PHI X Y N FLUXR FLUXA'
+     do j=1, nPhiCells; do i=1, nThetaCells
+        write(UnitTMP_, '( 2(1x,i4), 7(1x, E14.7))') &
+             i, j, 90.0-vthetacells(i), vphicells(j), &
+             mgridx(i,j), mgridy(i,j), mgridden(i,j), &
+             mgridfluxr(i,j), mgridfluxa(i,j)
+     end do; end do
+
   CASE ('OLD')
      write(UNITTMP_,*) 90.0-vthetacells
      write(UNITTMP_,*) vphicells
