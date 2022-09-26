@@ -163,7 +163,7 @@ Not all units for output values are known.
 Options include:
 \begin{itemize}
 \item {\tt SHORT} - Density and electric potential ($cm^{-3}$, $V$)
-\item {\tt VELOCITY} - Density, potential, radial velocity, azimuthal velocity ($cm^{-3}$, $V$, $m/s$, ?)
+\item {\tt VELOCITY} - Density, potential, radial velocity, azimuthal velocity ($cm^{-3}$, $V$, $m/s$, $degrees/s$)
 \item {\tt POTENTIAL} - Density, electric potential ($cm^{-3}$, $V$)
 \item {\tt FLOWS} - Density, radial and azimuthal fluxes ($cm^{-3}$, ?, ?)
 \item {\tt OLD } - All variables in an obsolete/basic file format. Not recommended.
