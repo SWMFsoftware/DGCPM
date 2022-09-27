@@ -879,12 +879,15 @@ C Dayside Closed Cells
           tn = mgridn(i,j)
           tden = mgridden(i,j)
           ! Only apply filling if FillDays is positive.
-          if ((tden.lt.dsat) .and. (FillDays>0)) then
+          if (tden.lt.dsat) then 
 C If cell density is below saturation, filling is calculated
-           f = ((dsat-mgridden(i,j))/dsat) * fmax *
-     *     (1./vrcells(i))**(0.3) *                        ! L_Shell Dep
-     *     sin(rad * (vphicells(j)-90.0))           ! Solar Zenith Dep
-
+             if (FillDays<0) then
+                f = 0
+             else
+                f = ((dsat-mgridden(i,j))/dsat) * fmax *
+     *               (1./vrcells(i))**(0.3) * ! L_Shell Dep
+     *               sin(rad * (vphicells(j)-90.0)) ! Solar Zenith Dep
+             endif
 !           br = mgridbi(i,j)
 !           mgridn(i,j) = mgridn(i,j) + ((f*delt)/br)
 !           mgridsource(i,j) = ((f*delt)/br) / mgridvol(i,j)
