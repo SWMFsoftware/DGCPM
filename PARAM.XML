@@ -78,9 +78,42 @@ For an example input file, see DGCPM/Input/kp_test.dat.
 3.0     EmptyPeriodClosed
 1.0     EmptyPeriodOpen
 1.5     FillDays
-2.0E12  FluxMax
 
-Set parameters that control flux tube refilling rate.
+Set parameters that control flux tube refilling and emptying: the time constant for closed flux tube loss ($\tau_{EmptyClosed}$), the time constant for open flux tube loss ($\tau_{EmptyOpen}$), and the time constant for flux tube refilling ($\tau_{Fill}$). All values above should be given in units of days; they are converted to seconds for use in the formulas below.
+
+Default values are shown. If FillDays is set to a negative number, no flux tube refilling will be applied.
+
+In DGCPM, filling and emptying of dayside, closed magnetic field lines works to drive each flux tube towards its saturation density, empirically determined by \emph{Carpenter and Anderson}, JGR, 1992 as,
+\begin{equation}
+n_{sat} = 10^{-0.3145 L + 3.9043)}
+\end{equation}
+given in electrons per cubic centimeter.
+
+On day side closed flux tubes where density is above $n_{sat}$, the density is dropped back to $n_{sat}$. If density is less than $n_{sat}$, a refilling flux is applied:
+
+\begin{equation}
+f_{refill} = f_{max}  \frac{n_{sat} - n}{n_{sat}}  \sin(\phi - \pi/4)
+\end{equation}
+
+...where $f_{max}$ is an estimate of the maximum number flux possible (e.g., refilling of an empty flux tube). This is calculated as,
+
+\begin{equation}
+f_{max} = \frac{2}{\tau_{Fill}} \frac{V_{min}}{L^3} L_{min} n_{sat,min}
+\end{equation}
+
+...where $V$ and $L$ are the volume and radial distance of the flux tube being refilled, $V_{min}$ and $L_{min}$ are the minimum flux tube volume within the entire computational domain and its radial distance, and $n_{sat,min}$ is the saturation density of the smallest flux tube by volume.
+The sine factor in the $f_{refill}$ formula scales refilling as a factor of solar zenith angle: flux tubes at local noon refill faster than flux tubes at local dawn or dusk.
+
+On open field lines, density decays:
+\begin{equation}
+n = n - \frac{1 - \Delta t}{\tau_{EmptyOpen}}
+\end{equation}
+where $\Delta t$ is the time step.
+
+Similarly, on night side closed flux tubes, density decays:
+\begin{equation}
+n = n - \frac{1 - \Delta t}{\tau_{EmptyClosed}}
+\end{equation}
 
 </command>
 
