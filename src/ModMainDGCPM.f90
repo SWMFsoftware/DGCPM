@@ -77,7 +77,7 @@ Module ModMainDGCPM
   real :: EmptyPeriodClosed = 3.0
   real :: EmptyPeriodOpen   = 1.0
   real :: FillDays          = 1.5
-  real :: FluxMax           = 2.0E12   
+  real :: FluxMax           = 2.0E12  ! CURRENTLY NOT USED.
 
   ! Define Output Variable Type
   character(10) :: OutputType = 'OLD'

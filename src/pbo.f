@@ -824,7 +824,7 @@ cccccccccccccccccccccccccc
       use ModSizeDGCPM, only: nrcells, nphicells
       use ModMainDGCPM, only: vrcells, vthetacells, vphicells,
      *    mgridn, mgridden, mgridvol, mgridoc, mgridbi, mgridsource,
-     *    EmptyPeriodOpen, EmptyPeriodClosed, FluxMax, FillDays
+     *    EmptyPeriodOpen, EmptyPeriodClosed, FillDays
       use ModTimeDGCPM, only: CurrentTime
       use ModFunctionsDGCPM
 
@@ -878,7 +878,8 @@ C Dayside Closed Cells
           mgridden(i,j) = mgridn(i,j) / mgridvol(i,j)
           tn = mgridn(i,j)
           tden = mgridden(i,j)
-          if (tden.lt.dsat) then
+          ! Only apply filling if FillDays is positive.
+          if ((tden.lt.dsat) .and. (FillDays>0)) then
 C If cell density is below saturation, filling is calculated
            f = ((dsat-mgridden(i,j))/dsat) * fmax *
      *     (1./vrcells(i))**(0.3) *                        ! L_Shell Dep

@@ -101,7 +101,7 @@ f_{refill} = f_{max}  \frac{n_{sat} - n}{n_{sat}}  \sin(\phi - \pi/4)
 f_{max} = \frac{2}{\tau_{Fill}} \frac{V_{min}}{L^3} L_{min} n_{sat,min}
 \end{equation}
 
-...where $V$ and $L$ are the volume and radial distance of the flux tube being refilled, $V_{min}$ and $L_{min}$ are the minimum flux tube volume within the entire computational domain and its radial distance, and $n_{sat,min}$ is the saturation density of the smallest flux tube by volume.
+...where $L$ is the radial distance of the flux tube being refilled, $V_{min}$ and $L_{min}$ are the minimum flux tube volume within the entire computational domain and its radial distance, and $n_{sat,min}$ is the saturation density of the smallest flux tube by volume.
 The sine factor in the $f_{refill}$ formula scales refilling as a factor of solar zenith angle: flux tubes at local noon refill faster than flux tubes at local dawn or dusk.
 
 On open field lines, density decays:

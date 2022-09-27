@@ -167,8 +167,7 @@ contains
             call read_var('EmptyPeriodClosed', EmptyPeriodClosed)
             call read_var('EmptyPeriodOpen', EmptyPeriodOpen)
             call read_var('FillRate', FillDays) 
-            call read_var('FluxMax', FluxMax)
-
+            
          case("#TESTS")
             call read_var('TestFill', TestFill)
 
